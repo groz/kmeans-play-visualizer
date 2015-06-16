@@ -1,37 +1,44 @@
 package controllers
 
 import models.KMeansClusterer
-import play.api.libs.json.{JsValue, Json, JsPath, Writes}
+import play.api.libs.json.Json
 import play.api.mvc._
-import play.api.libs.functional.syntax._
 import play.twirl.api.Html
 
 class Application extends Controller {
 
+  case class Cluster(number: Int, points: Seq[Vector[Double]])
+  implicit val clusterWrites = Json.writes[Cluster] // json formatter for Cluster
+
+  val dimensions = 2
   val clusterer = new KMeansClusterer()
 
-  case class Cluster(number: Int, points: List[Vector[Double]])
+  val maxClusters = 20
+  val maxPoints = 1000
+
+  def kmeans(k: Int, nPoints: Int, clustererName: String) = Action {
+    if (k > maxClusters || nPoints > maxPoints) {
+      Redirect(routes.Application.kmeans(Math.min(k, maxClusters), Math.min(nPoints, maxPoints), clustererName))
+    } else {
+      val points =
+        (1 to maxPoints)
+          .map(_ => (1 to dimensions).map(_ => math.random).toVector)
+
+      val clusters = clusterer.clusterize(points, k)
+
+      val dataset: List[Cluster] = for {
+        (cluster, idx) <- clusters.toList.zipWithIndex
+      } yield Cluster(idx, cluster)
+
+      val json = Json.toJson(dataset)
+
+      val html = Html(Json.stringify(json))
+
+      Ok(views.html.kmeans(dimensions, html))
+    }
+  }
 
   def index = Action {
-
-    val dimensions = 2
-    val a = (1 to 300).map(x => (1 to dimensions).map(y => math.random).toVector).toSeq
-    val k = 9
-    val clusters: Set[clusterer.Cluster] = clusterer.clusterize(a, k)
-
-    val dataset: List[Cluster] = for {
-      (cluster, idx) <- clusters.toList.zipWithIndex
-    } yield Cluster(idx, cluster.toList)
-
-    implicit val locationWrites: Writes[Cluster] = (
-      (JsPath \ "number").write[Int] and
-      (JsPath \ "points").write[List[Vector[Double]]]
-    )(unlift(Cluster.unapply))
-
-    val json: JsValue = Json.toJson(dataset)
-
-    val html = Html(Json.stringify(json))
-
-    Ok(views.html.index(dimensions, html))
+    Ok(views.html.index())
   }
 }

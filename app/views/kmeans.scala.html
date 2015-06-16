@@ -1,0 +1,12 @@
+@(dimensions: Int, data: play.twirl.api.Html)
+
+@main("Welcome to Play") {
+
+    <script>
+      var dimensions = @dimensions;
+      var clusters = @data;
+
+      plot(dimensions, clusters);
+    </script>
+
+}
