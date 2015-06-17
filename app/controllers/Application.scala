@@ -15,7 +15,8 @@ class Application extends Controller {
   val clusterers = Map(
     "Hasan" -> new models.solutionHasan.KMeansClusterer(),
     "Rasul" -> new models.solutionRasul.KMeansClusterer(),
-    "Murad" -> new models.solutionMurad.KMeansClusterer()
+    "Murad" -> new models.solutionMurad.KMeansClusterer(),
+    "Hasan++" -> new models.solutionHasan.KMeansPlusPlusClusterer()
   )
 
   val maxClusters = 20
