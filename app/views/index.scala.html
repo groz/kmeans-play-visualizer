@@ -1,4 +1,4 @@
-@()
+@(clusterers: Seq[String])
 
 @main("Welcome to Play") {
 
@@ -25,7 +25,11 @@
                     <label for="clustererInput">Clusterer:</label>
                 </td>
                 <td>
-                    <input name="clustererName" id="clustererInput" type="text" value="Hasan"/>
+                    <select name="clustererName" id="clustererInput">
+                        @for(clustererName <- clusterers) {
+                            <option value="@clustererName">@clustererName</option>
+                        }
+                    </select>
                 </td>
             </tr>
         </table>
