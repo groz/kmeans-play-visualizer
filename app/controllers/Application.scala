@@ -25,7 +25,7 @@ class Application extends Controller {
       Redirect(routes.Application.kmeans(Math.min(k, maxClusters), Math.min(nPoints, maxPoints), clustererName))
     else {
       clusterers.get(clustererName).fold(NotFound: Result) { clusterer =>
-        val points = (1 to maxPoints).map(_ => (1 to dimensions).map(_ => math.random).toVector)
+        val points = (1 to nPoints).map(_ => (1 to dimensions).map(_ => math.random).toVector)
 
         val clusters = clusterer.clusterize(points, k)
 
