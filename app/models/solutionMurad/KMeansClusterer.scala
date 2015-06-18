@@ -1,6 +1,7 @@
 package models.solutionMurad
 
 import models.Clusterer
+import models.Clusterer._
 
 // https://en.wikipedia.org/wiki/K-means_clustering
 class KMeansClusterer extends Clusterer {

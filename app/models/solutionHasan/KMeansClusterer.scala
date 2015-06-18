@@ -1,6 +1,7 @@
 package models.solutionHasan
 
 import models.Clusterer
+import models.Clusterer._
 
 import scala.util.Random
 

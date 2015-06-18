@@ -22,12 +22,16 @@ class Application extends Controller {
   val maxClusters = 20
   val maxPoints = 1000
 
+  def initializeField(nPoints: Int): Seq[Vector[Double]] = {
+    (1 to nPoints).map(_ => (1 to dimensions).map(_ => math.random).toVector)
+  }
+
   def kmeans(k: Int, nPoints: Int, clustererName: String) = Action {
     if (k > maxClusters || nPoints > maxPoints)
       Redirect(routes.Application.kmeans(Math.min(k, maxClusters), Math.min(nPoints, maxPoints), clustererName))
     else {
       clusterers.get(clustererName).fold(NotFound: Result) { clusterer =>
-        val points = (1 to nPoints).map(_ => (1 to dimensions).map(_ => math.random).toVector)
+        val points = initializeField(nPoints)
 
         val clusters = clusterer.clusterize(points, k)
 

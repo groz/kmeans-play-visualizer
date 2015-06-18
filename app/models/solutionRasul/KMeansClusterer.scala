@@ -1,6 +1,7 @@
 package models.solutionRasul
 
 import models.Clusterer
+import models.Clusterer._
 
 import scala.util.Random
 // https://en.wikipedia.org/wiki/K-means_clustering
@@ -14,14 +15,10 @@ class KMeansClusterer extends Clusterer {
 
   def process(clusters: Set[Cluster], means: Seq[V]): Set[Cluster] =
   {
-    //println("Process method")
-    //println("clusters:"+clusters)
     val newClusters = assignment(clusters,means)
-    //println("newclusters:"+newClusters)
-    if (newClusters!=clusters)
+    if (newClusters != clusters)
     {
       val newMeans = update(newClusters)
-      //println(newMeans)
       process(newClusters,newMeans)
     } else newClusters
   }
@@ -40,15 +37,15 @@ class KMeansClusterer extends Clusterer {
   def assignment(input: Set[Cluster], means: Seq[V]): Set[Cluster] =
   {
     input.toSeq.flatten
-      .groupBy(v=> means.minBy(distance(_,v)))
-      .mapValues(s=>s.toVector)
+      .groupBy(v => means.minBy(distance(_,v)))
+      .mapValues(_.toVector)
       .values
       .toSet
   }
 
   def update(clusters: Set[Cluster]): Seq[V] =
   {
-    clusters.map(c=> div(c.reduce(sumOf),c.length)).toSeq
+    clusters.map(c => div(c.reduce(sumOf), c.length)).toSeq
   }
 
 
@@ -56,5 +53,5 @@ class KMeansClusterer extends Clusterer {
 
   def sumOf(v1: V, v2: V): V = v1.zip(v2).map({case(x1,x2)=>x1+x2})
 
-  def div(v: V, byValue: Double): V = v.map(x=>x/byValue)
+  def div(v: V, byValue: Double): V = v.map(_ / byValue)
 }

@@ -1,11 +1,10 @@
 package models.solutionRasul
 
+import models.Clusterer.Cluster
+
 object MainApp extends App
 {
   var clusterer = new KMeansClusterer
-  type V = Vector[Double]
-  type Cluster = Seq[V]
-
   val cluster: Cluster =
     Seq(
       Vector(1,1),
