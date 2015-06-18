@@ -35,7 +35,6 @@ class KMeansClusterer extends Clusterer {
 
 
   def clusterize(input: Cluster, n: Int): Set[Cluster] = {
-
     mainCluster = input;
     recursiveFunc(getClustersByBase(input, input.take(n)))
 

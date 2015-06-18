@@ -21,7 +21,6 @@ class KMeansPlusPlusClusterer extends Clusterer {
       var withDist = input.filter(y => !centroids.exists(z => z == y)).map(x => (x, centroids.map(p => dist(x, p)).min))
       var sum = withDist.map(x => x._2).sum
       var rand = math.random * sum
-      println(centroids.length)
       var d = 0.0
 
       var j = 0

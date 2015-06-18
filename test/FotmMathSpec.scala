@@ -1,4 +1,5 @@
 import models.FotmMath
+import models.ClustererEvaluator
 import org.specs2.mutable._
 import org.specs2.runner._
 import org.junit.runner._
@@ -26,7 +27,7 @@ class FotmMathSpec extends Specification {
     }
 
     "calc dist between vectors" in {
-      dist(Vector(1.0, 1.0), Vector(2.0, 2.0)) must equalTo(1)
+      dist(Vector(1.0, 1.0), Vector(2.0, 2.0)) must equalTo(Math.sqrt(2))
     }
 
     "divide vector by number correctly" in {
@@ -35,6 +36,12 @@ class FotmMathSpec extends Specification {
 
     "calc vector length correctly" in {
       len(Vector(3.0, 4.0)) must equalTo (5.0)
+    }
+
+    "cluster centroid should be middle of 2 points" in {
+      val cluster = List(Vector(0.0, 0.0), Vector(2.0, 1.0))
+      val centroid = ClustererEvaluator.calcCentroid(cluster)
+      centroid must equalTo(Vector(1, .5))
     }
   }
 }

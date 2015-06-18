@@ -1,6 +1,8 @@
 package controllers
 
-import models.solutionHasan.KMeansClusterer
+import models.Clusterer
+import models.FotmMath
+
 import play.api.libs.json.Json
 import play.api.mvc._
 import play.twirl.api.Html
@@ -12,28 +14,19 @@ class Application extends Controller {
 
   val dimensions = 2
 
-  val clusterers = Map(
-    "Hasan" -> new models.solutionHasan.KMeansClusterer(),
-    "Rasul" -> new models.solutionRasul.KMeansClusterer(),
-    "Murad" -> new models.solutionMurad.KMeansClusterer(),
-    "Hasan++" -> new models.solutionHasan.KMeansPlusPlusClusterer()
-  )
-
   val maxClusters = 20
   val maxPoints = 1000
-
-  def initializeField(nPoints: Int): Seq[Vector[Double]] = {
-    (1 to nPoints).map(_ => (1 to dimensions).map(_ => math.random).toVector)
-  }
+  val clusterers = Clusterer.implementations
 
   def kmeans(k: Int, nPoints: Int, clustererName: String) = Action {
     if (k > maxClusters || nPoints > maxPoints)
       Redirect(routes.Application.kmeans(Math.min(k, maxClusters), Math.min(nPoints, maxPoints), clustererName))
     else {
       clusterers.get(clustererName).fold(NotFound: Result) { clusterer =>
-        val points = initializeField(nPoints)
+        //val points = initializeField(nPoints)
+        val points = FotmMath.gaussianDistributedPoints(nPoints, k)
 
-        val clusters = clusterer.clusterize(points, k)
+        val clusters = clusterer().clusterize(points, k)
 
         val dataset: List[Cluster] = for {
           (cluster, idx) <- clusters.toList.zipWithIndex
