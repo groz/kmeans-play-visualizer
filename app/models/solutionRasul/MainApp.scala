@@ -4,7 +4,7 @@ import models.Clusterer.Cluster
 
 object MainApp extends App
 {
-  var clusterer = new KMeansClusterer
+  var clusterer = new KMeansClustererSimple
   val cluster: Cluster =
     Seq(
       Vector(1,1),

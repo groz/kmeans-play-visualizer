@@ -8,7 +8,7 @@ object Clusterer {
 
   lazy val implementations = Map(
     "Hasan" -> { () => new models.solutionHasan.KMeansClusterer() },
-    "Rasul" -> { () => new models.solutionRasul.KMeansClusterer() },
+    "Rasul" -> { () => new models.solutionRasul.KMeansClustererSimple() },
     "Murad" -> { () => new models.solutionMurad.KMeansClusterer() },
     "HasanFP++" -> { () => new models.solutionHasan.FpPlusPlusKMeansClusterer() }
     //"Hasan++" -> { () => new models.solutionHasan.KMeansPlusPlusClusterer() }
@@ -18,8 +18,10 @@ object Clusterer {
 
 import models.Clusterer._
 
-abstract class Clusterer {
-  def clusterize(input: Cluster, k: Int): Set[Cluster]
+trait Clusterer {
+  type V = Vector[Double]
+  type Cluster = Seq[V]
+  def clusterize(input: Cluster, groupSize: Int): Set[Cluster]
 }
 
 object FotmMath {
