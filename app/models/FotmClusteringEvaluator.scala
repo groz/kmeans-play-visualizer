@@ -67,7 +67,7 @@ object FotmClusteringEvaluator extends App {
 
   }
 
-  def calcRating(ladder: LadderSnapshot, charId: CharacterId, team: Team, won: Boolean): Int = {
+  def calcRating(charId: CharacterId, team: Team, won: Boolean)(ladder: LadderSnapshot): Int = {
     val teamRating = team.rating(ladder)
     val charInfo = ladder(charId)
     if (won) {
@@ -86,29 +86,31 @@ object FotmClusteringEvaluator extends App {
   def play(currentLadder: LadderSnapshot, wTeam: Team, lTeam: Team): LadderSnapshot = {
     //val (winners, losers) = if (rng.nextBoolean()) (team1, team2) else (team2, team1)
 
-    val ladderWithWinners = wTeam.members.foldLeft(currentLadder) { (ladder, charId) =>
-      val ratingDelta = calcRating(currentLadder, charId, lTeam, won = true)
-      val charInfo = currentLadder(charId)
+    val ladderWithWinners: LadderSnapshot =
+      wTeam.members.foldLeft(currentLadder) { (ladder, charId) =>
+        val ratingDelta = calcRating(charId, lTeam, won = true)(currentLadder)
+        val charInfo = currentLadder(charId)
 
-      val newCharInfo = charInfo.copy(
-        rating = ratingDelta,
-        weeklyWins = charInfo.weeklyWins + 1,
-        seasonWins = charInfo.seasonWins + 1)
+        val newCharInfo = charInfo.copy(
+          rating = ratingDelta,
+          weeklyWins = charInfo.weeklyWins + 1,
+          seasonWins = charInfo.seasonWins + 1)
 
-      ladder.updated(charInfo.id, newCharInfo)
-    }
+        ladder.updated(charInfo.id, newCharInfo)
+      }
 
-    val result = lTeam.members.foldLeft(ladderWithWinners) { (ladder, charId) =>
-      val ratingDelta = calcRating(currentLadder, charId, wTeam, won = false)
-      val charInfo = currentLadder(charId)
+    val result: LadderSnapshot =
+      lTeam.members.foldLeft(ladderWithWinners) { (ladder, charId) =>
+        val ratingDelta = calcRating(charId, wTeam, won = false)(currentLadder)
+        val charInfo = currentLadder(charId)
 
-      val newCharInfo = charInfo.copy(
-        rating = ratingDelta,
-        weeklyLosses = charInfo.weeklyLosses + 1,
-        seasonLosses = charInfo.seasonLosses + 1)
+        val newCharInfo = charInfo.copy(
+          rating = ratingDelta,
+          weeklyLosses = charInfo.weeklyLosses + 1,
+          seasonLosses = charInfo.seasonLosses + 1)
 
-      ladder.updated(charInfo.id, newCharInfo)
-    }
+        ladder.updated(charInfo.id, newCharInfo)
+      }
 
     result
   }

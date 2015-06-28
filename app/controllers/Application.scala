@@ -2,6 +2,7 @@ package controllers
 
 import models.Clusterer
 import models.FotmMath
+import play.api.Logger
 
 import play.api.libs.json.Json
 import play.api.mvc._
@@ -24,7 +25,7 @@ class Application extends Controller {
     else {
       clusterers.get(clustererName).fold(NotFound: Result) { clusterer =>
         //val points = initializeField(nPoints)
-        val points = FotmMath.gaussianDistributedPoints(nPoints, k)
+        val points = FotmMath.uniformlyDistributedPoints(nPoints)
 
         val clusters = clusterer().clusterize(points, k)
 
@@ -42,6 +43,7 @@ class Application extends Controller {
   }
 
   def index = Action {
+    println("Hello, Play App")
     Ok(views.html.index(clusterers.keys.toSeq))
   }
 }
